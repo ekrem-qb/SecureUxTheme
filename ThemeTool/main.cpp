@@ -73,7 +73,6 @@ int APIENTRY wWinMain(
 )
 {
   UNREFERENCED_PARAMETER(prev_instance);
-  UNREFERENCED_PARAMETER(cmd_line);
 
   do_init(instance);
 
@@ -100,6 +99,39 @@ int APIENTRY wWinMain(
     return POST_ERROR(ESTRt(L"themetool_init failed, hr = %08X.\n\nThis is usually caused by corrupted files. Make sure you don't have any other theme patcher installed, and check for corrupted files with sfc /scannow"), hr);
   if (FAILED(hr))
     return POST_ERROR(ESTRt(L"themetool_init failed, hr = %08X.\n\n%s"), hr, utl::ErrorToString(hr).c_str());
+
+  if (std::wcslen(cmd_line) > 0)
+  {
+    try
+    {
+      const auto id = std::stoi(cmd_line);
+      const auto result = themetool_set_active(
+        nullptr,
+        id,
+        1,
+        63,
+        0
+      );
+
+      if(FAILED(result))
+      {
+        return POST_ERROR(
+          ESTRt(L"Theme setting failed. The following error was encountered:\r\n%s\r\nConsider submitting a bug report."),
+          utl::ErrorToString(result).c_str()
+        );
+      }
+    }
+    catch (const std::invalid_argument& _)
+    {
+      return POST_ERROR(ESTRt(L"Can't parse theme id, invalid argument: %s"), cmd_line);
+    }
+    catch (const std::out_of_range& _)
+    {
+      return POST_ERROR(ESTRt(L"Can't parse theme id, out of the range of representable values by an int: %s"), cmd_line);
+    }
+
+    return 0;
+  }
 
   const auto dialog = CreateDialogParam(
     instance,
