@@ -76,13 +76,6 @@ int APIENTRY wWinMain(
 
   do_init(instance);
 
-  MessageBoxW(
-    nullptr,
-    ESTRt(L"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details."),
-    ESTRt(L"Warranty disclaimer"),
-    MB_OK | MB_ICONWARNING
-  );
-
   INITCOMMONCONTROLSEX iccex
   {
     sizeof(INITCOMMONCONTROLSEX),
